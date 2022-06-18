@@ -4,3 +4,8 @@ Stock APIs (such as Yahoo finance) tend to be unreliable for a small and mid cap
 Languages:
 * Languages: typescript, javascript
 * Environment: node.js
+
+Features:
+* Prevent system sleep when running
+* Download stock value variations at a specified timestep
+* Automatically stop after stock market is closed
