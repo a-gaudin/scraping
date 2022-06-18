@@ -22,7 +22,18 @@ function getTimeDifference(datetimeStart: number, datetimeEnd: number) {
   return Math.round(hoursToSec(datetimeEnd - datetimeStart));
 }
 
-function getDateTime() {
+type DateTime = {
+  date: string,
+  dateHours: string,
+  dayOfWeek: number,
+  hours: number,
+  minutes: number,
+  seconds: number,
+  time: string,
+  timeInHours: number
+}
+
+function getDateTime(): DateTime {
   const now: Date = new Date();
   const year: number = now.getFullYear();
   const month: number = now.getMonth() + 1; // 1 to 12
@@ -64,5 +75,6 @@ export {
   hoursToSec,
   hoursToMillisec,
   getTimeDifference,
-  getDateTime
+  DateTime,
+  getDateTime,
 }

@@ -1,18 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.urls = exports.csvFolderPath = exports.params = void 0;
-const params = {
+exports.urls = exports.csvFolderPath = exports.requestParams = exports.marketParams = void 0;
+const marketParams = {
     startDay: 0,
     endDay: 6,
     startHour: 2,
-    endHour: 23.8,
+    endHour: 23.8, // 17.5 = Request before 17:30
+};
+exports.marketParams = marketParams;
+const requestParams = {
     loopTime: 60 * 1000,
     timeout: 55 * 1000,
     margin: 3 * 1000,
     selection: '.c-faceplate__fluctuation .c-instrument--variation',
     concurrentPageDownloads: 48,
 };
-exports.params = params;
+exports.requestParams = requestParams;
 const csvFolderPath = './csv';
 exports.csvFolderPath = csvFolderPath;
 const urls = [

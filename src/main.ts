@@ -1,19 +1,19 @@
-import { exec } from "child_process";
+import { ChildProcess, exec } from "child_process";
 import { fork } from "child_process";
 
-import * as config from "./config"
+import * as cfg from "./config"
 import * as csv from "./js/csv"
 import * as dt from "./js/datetime"
 
-function addTimestampToVariations(arr: any[], timestamp: number) {
+function addTimestampToVariations(arr: VariationsTimestamp, timestamp: number) {
   return arr.forEach((el) => el["timestamp"] = timestamp);
 }
 
 function isMarketOpen() {
   const now = dt.getDateTime();
 
-  return (now.dayOfWeek >= params.startDay && now.dayOfWeek <= params.endDay &&
-    now.timeInHours > params.startHour && now.timeInHours < params.endHour)
+  return (now.dayOfWeek >= market.startDay && now.dayOfWeek <= market.endDay &&
+    now.timeInHours > market.startHour && now.timeInHours < market.endHour)
     ? true : false;
 }
 
@@ -22,30 +22,29 @@ function getTimeToNextLoop(nowSeconds: number) {
 }
 
 function getTimeToMarketOpening(nowHours: number) {
-  const timeToOpening = nowHours < params.startHour ?
-    dt.hoursToMillisec(params.startHour - nowHours) :
-    dt.hoursToMillisec(24 - nowHours + params.startHour);
+  const timeToOpening: number = nowHours < market.startHour ?
+    dt.hoursToMillisec(market.startHour - nowHours) :
+    dt.hoursToMillisec(24 - nowHours + market.startHour);
 
   return timeToOpening + params.margin;
 }
 
-function getTimestamp(now: any) {
-  return (dt.hoursToMin(now.hours) + now.minutes - dt.hoursToMin(params.startHour)) /
+function getTimestamp(now: dt.DateTime) {
+  return (dt.hoursToMin(now.hours) + now.minutes - dt.hoursToMin(market.startHour)) /
     params.loopTime;
 }
 
 function loop() {
   if (isMarketOpen()) {
-    let newVariations: {variation: number, url: string}[] = [];
+    let newVariations: any[] = [];
 
-    const now = dt.getDateTime();
-    const timestamp = getTimestamp(now);
+    const now: dt.DateTime = dt.getDateTime();
+    const timestamp: number = getTimestamp(now);
     console.log('Time: ' + now.time + ', Timestamp: ' + timestamp);
-
-    const child = fork('./js/download.js');
+    
+    const child: ChildProcess = fork('./js/download.js');
     child.on('error', (err: string) => console.log(err));
-    child.on('message', (data: {variation: number, url: string}[]) =>
-        newVariations = data);
+    child.on('message', (data: Variations) => newVariations = data);
 
     setTimeout(function() {
       child.kill();
@@ -68,9 +67,9 @@ function loop() {
 }
 
 function init() {
-  const now = dt.getDateTime();
+  const now: dt.DateTime = dt.getDateTime();
   
-  const timeToStart = isMarketOpen() ?
+  const timeToStart: number = isMarketOpen() ?
     getTimeToNextLoop(now.seconds) :
     getTimeToMarketOpening(now.timeInHours);
 
@@ -79,7 +78,22 @@ function init() {
   setTimeout(loop, timeToStart);
 }
 
-const params = config.params;
-let variations: any[] = [];
+const market = cfg.marketParams as cfg.MarketParams;
+const params = cfg.requestParams as cfg.RequestParams;
+
 const caffeinate = exec('caffeinate -d -i -m -s');
+
+type Variations = {
+  variation: number,
+  url: string
+}[]
+
+type VariationsTimestamp = {
+  variation: number,
+  url: string,
+  timestamp: number
+}[]
+
+let variations: VariationsTimestamp = [];
+
 init();

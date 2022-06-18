@@ -1,8 +1,18 @@
-type Params = {
+type MarketParams = {
     startDay: number,
     endDay: number,
     startHour: number,
     endHour: number,
+}
+
+const marketParams = {
+    startDay: 0, // 1 = Monday, 0 = Sunday
+    endDay: 6, // 5 = Friday, 6 = Saturday
+    startHour: 2, // 9 = Requests after 9:00
+    endHour: 23.8, // 17.5 = Request before 17:30
+} as MarketParams
+
+type RequestParams = {
     loopTime: number,
     timeout: number,
     margin: number,
@@ -10,17 +20,13 @@ type Params = {
     concurrentPageDownloads: number
 }
 
-const params = {
-    startDay: 0, // 1 = Monday, 0 = Sunday
-    endDay: 6, // 5 = Friday, 6 = Saturday
-    startHour: 2, // 9 = Requests after 9:00
-    endHour: 23.8, // 17.5 = Request before 17:30
+const requestParams = {
     loopTime: 60 * 1000, // milliseconds
     timeout: 55 * 1000, // milliseconds
     margin: 3 * 1000, // milliseconds
     selection: '.c-faceplate__fluctuation .c-instrument--variation', // targeted className's parent className and targeted className
     concurrentPageDownloads: 48,
-} as Params
+} as RequestParams
 
 const csvFolderPath: string = './csv';
 
@@ -169,7 +175,10 @@ const urls: string[] = [
 ]
 
 export {
-    params,
+    MarketParams,
+    marketParams,
+    RequestParams,
+    requestParams,
     csvFolderPath,
     urls
 }
