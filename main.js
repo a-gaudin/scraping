@@ -1,9 +1,10 @@
 "use strict";
-const { exec } = require('child_process');
-const { fork } = require('child_process');
-const config = require('./config.js');
-const csv = require('./js/csv.js');
-const dt = require('./js/datetime.js');
+Object.defineProperty(exports, "__esModule", { value: true });
+const child_process_1 = require("child_process");
+const child_process_2 = require("child_process");
+const config = require("./config");
+const csv = require("./js/csv");
+const dt = require("./js/datetime");
 function addTimestampToVariations(arr, timestamp) {
     return arr.forEach((el) => el["timestamp"] = timestamp);
 }
@@ -23,7 +24,7 @@ function getTimeToMarketOpening(nowHours) {
     return timeToOpening + params.margin;
 }
 function getTimestamp(now) {
-    return (60 * now.hours + now.minutes - 60 * params.startHour) /
+    return (dt.hoursToMin(now.hours) + now.minutes - dt.hoursToMin(params.startHour)) /
         params.loopTime;
 }
 function loop() {
@@ -32,7 +33,7 @@ function loop() {
         const now = dt.getDateTime();
         const timestamp = getTimestamp(now);
         console.log('Time: ' + now.time + ', Timestamp: ' + timestamp);
-        const child = fork('./js/download.js');
+        const child = (0, child_process_2.fork)('./js/download.js');
         child.on('error', (err) => console.log(err));
         child.on('message', (data) => newVariations = data);
         setTimeout(function () {
@@ -43,6 +44,7 @@ function loop() {
             variations = [...variations, ...newVariations];
             csv.create(variations, 'variations', true);
             const timeToNextLoop = params.loopTime - params.timeout;
+            console.log(`Time to next download series: ${dt.millisecToSec(timeToNextLoop)}s`);
             setTimeout(loop, timeToNextLoop);
         }, params.timeout);
     }
@@ -56,9 +58,10 @@ function init() {
     const timeToStart = isMarketOpen() ?
         getTimeToNextLoop(now.seconds) :
         getTimeToMarketOpening(now.timeInHours);
+    console.log(`Time to start: ${dt.millisecToSec(timeToStart)}s`);
     setTimeout(loop, timeToStart);
 }
-const params = config.request_params;
+const params = config.params;
 let variations = [];
-const caffeinate = exec('caffeinate -d -i -m -s');
+const caffeinate = (0, child_process_1.exec)('caffeinate -d -i -m -s');
 init();

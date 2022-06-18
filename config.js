@@ -1,15 +1,20 @@
 "use strict";
-const request_params = {
-    startDay: 1,
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.urls = exports.csvFolderPath = exports.params = void 0;
+const params = {
+    startDay: 0,
     endDay: 6,
-    startHour: 9,
-    endHour: 17.5,
+    startHour: 2,
+    endHour: 23.8,
     loopTime: 60 * 1000,
     timeout: 55 * 1000,
     margin: 3 * 1000,
     selection: '.c-faceplate__fluctuation .c-instrument--variation',
     concurrentPageDownloads: 48,
 };
+exports.params = params;
+const csvFolderPath = './csv';
+exports.csvFolderPath = csvFolderPath;
 const urls = [
     "https://www.boursorama.com/cours/1rPAC",
     "https://www.boursorama.com/cours/1rPADP",
@@ -153,7 +158,4 @@ const urls = [
     "https://www.boursorama.com/cours/1rPWLN",
     "https://www.boursorama.com/cours/1rP2CRSI"
 ];
-module.exports = {
-    params: params,
-    urls: urls
-};
+exports.urls = urls;

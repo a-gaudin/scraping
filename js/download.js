@@ -1,5 +1,5 @@
 const scrape = require('scrape');
-const cfg = require('./../config.js');
+const cfg = require('../config.js');
 const dt = require('./datetime.js');
 
 const params = cfg.params;
@@ -23,7 +23,7 @@ scrape.concurrent(urls, params.concurrentPageDownloads, function(url, next) {
 
           if (typeof scraped !== 'undefined') {
             const now = dt.getDateTime();
-            const duration = dt.getTimeDifference(startTime, now);
+            const duration = dt.getTimeDifference(startTime.timeInHours, now.timeInHours);
 
             variation.variation = convertToNumber(scraped); // '+0.18%' becomes 0.18
             variation.url = getURLend(url);

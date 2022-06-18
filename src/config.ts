@@ -1,23 +1,28 @@
-const request_params: {
-        startDay: number,
-        endDay: number,
-        startHour: number,
-        endHour: number,
-        loopTime: number,
-        timeout: number,
-        margin: number,
-        selection: string,
-        concurrentPageDownloads: number } = {
-    startDay: 1, // 1 = Monday, 0 = Sunday
+type Params = {
+    startDay: number,
+    endDay: number,
+    startHour: number,
+    endHour: number,
+    loopTime: number,
+    timeout: number,
+    margin: number,
+    selection: string,
+    concurrentPageDownloads: number
+}
+
+const params = {
+    startDay: 0, // 1 = Monday, 0 = Sunday
     endDay: 6, // 5 = Friday, 6 = Saturday
-    startHour: 9, // Requests after 9:00
-    endHour: 17.5, // Request before 17:30
+    startHour: 2, // 9 = Requests after 9:00
+    endHour: 23.8, // 17.5 = Request before 17:30
     loopTime: 60 * 1000, // milliseconds
     timeout: 55 * 1000, // milliseconds
     margin: 3 * 1000, // milliseconds
     selection: '.c-faceplate__fluctuation .c-instrument--variation', // targeted className's parent className and targeted className
     concurrentPageDownloads: 48,
-}
+} as Params
+
+const csvFolderPath: string = './csv';
 
 const urls: string[] = [
     "https://www.boursorama.com/cours/1rPAC",
@@ -163,7 +168,8 @@ const urls: string[] = [
     "https://www.boursorama.com/cours/1rP2CRSI"
 ]
 
-module.exports = {
-    params: params,
-    urls: urls
+export {
+    params,
+    csvFolderPath,
+    urls
 }

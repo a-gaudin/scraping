@@ -1,9 +1,9 @@
-const { exec } = require('child_process');
-const { fork } = require('child_process');
+import { exec } from "child_process";
+import { fork } from "child_process";
 
-const config = require('./config.js');
-const csv = require('./js/csv.js');
-const dt = require('./js/datetime.js');
+import * as config from "./config"
+import * as csv from "./js/csv"
+import * as dt from "./js/datetime"
 
 function addTimestampToVariations(arr: any[], timestamp: number) {
   return arr.forEach((el) => el["timestamp"] = timestamp);
@@ -29,8 +29,8 @@ function getTimeToMarketOpening(nowHours: number) {
   return timeToOpening + params.margin;
 }
 
-function getTimestamp(now: {[key: string]: number}) {
-  return (60 * now.hours + now.minutes - 60 * params.startHour) /
+function getTimestamp(now: any) {
+  return (dt.hoursToMin(now.hours) + now.minutes - dt.hoursToMin(params.startHour)) /
     params.loopTime;
 }
 
@@ -57,6 +57,8 @@ function loop() {
       csv.create(variations, 'variations', true);
 
       const timeToNextLoop = params.loopTime - params.timeout;
+      console.log(`Time to next download series: ${dt.millisecToSec(timeToNextLoop)}s`);
+
       setTimeout(loop, timeToNextLoop);
     }, params.timeout);
   } else {
@@ -72,10 +74,12 @@ function init() {
     getTimeToNextLoop(now.seconds) :
     getTimeToMarketOpening(now.timeInHours);
 
+  console.log(`Time to start: ${dt.millisecToSec(timeToStart)}s`);
+  
   setTimeout(loop, timeToStart);
 }
 
-const params = config.request_params;
+const params = config.params;
 let variations: any[] = [];
 const caffeinate = exec('caffeinate -d -i -m -s');
 init();
