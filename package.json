@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "cheerio-soupselect": "^0.1.1",
+    "child_process": "^1.0.2",
+    "curlrequest": "^1.0.1",
+    "objects-to-csv": "^1.3.6",
+    "scrape": "^0.2.3",
+    "scrape-it": "^1.0.0"
+  }
+}
